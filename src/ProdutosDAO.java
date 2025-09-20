@@ -12,12 +12,13 @@ public class ProdutosDAO {
     ResultSet resultset;
     ArrayList<ProdutosDTO> listagem = new ArrayList<>();
 
-    public void cadastrarProduto(ProdutosDTO produto) {
+    public boolean cadastrarProduto(ProdutosDTO produto) {
         conn = new conectaDAO().connectDB();
+        boolean sucesso = false;
 
         if (conn == null) {
             JOptionPane.showMessageDialog(null, "Erro: Não foi possível conectar ao banco!");
-            return;
+            return false;
         }
 
         try {
@@ -27,8 +28,14 @@ public class ProdutosDAO {
             prep.setInt(2, produto.getValor());
             prep.setString(3, produto.getStatus());
 
-            prep.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Produto cadastrado com sucesso!");
+            int linhasAfetadas = prep.executeUpdate();
+
+            if (linhasAfetadas > 0) {
+                JOptionPane.showMessageDialog(null, "Produto cadastrado com sucesso!");
+                sucesso = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro: Nenhum produto foi cadastrado!");
+            }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erro ao cadastrar produto: " + e.getMessage());
@@ -44,6 +51,7 @@ public class ProdutosDAO {
                 JOptionPane.showMessageDialog(null, "Erro ao fechar conexão: " + e.getMessage());
             }
         }
+        return sucesso;
     }
 
     public ArrayList<ProdutosDTO> listarProdutos() {
