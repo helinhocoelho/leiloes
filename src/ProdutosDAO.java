@@ -1,4 +1,3 @@
-
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -134,6 +133,9 @@ public class ProdutosDAO {
             JOptionPane.showMessageDialog(null, "Erro ao vender produto: " + e.getMessage());
         } finally {
             try {
+                if (resultset != null) {
+                    resultset.close();
+                }
                 if (prep != null) {
                     prep.close();
                 }
@@ -145,5 +147,49 @@ public class ProdutosDAO {
             }
         }
         return sucesso;
+    }
+
+    public ArrayList<ProdutosDTO> listarVendidos() {
+        ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+        conn = new conectaDAO().connectDB();
+
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Erro: Não foi possível conectar ao banco!");
+            return listagem;
+        }
+
+        try {
+            String sql = "SELECT * FROM produtos WHERE status = 'Vendido'";
+            prep = conn.prepareStatement(sql);
+            resultset = prep.executeQuery();
+
+            while (resultset.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+                produto.setId(resultset.getInt("id"));
+                produto.setNome(resultset.getString("nome"));
+                produto.setValor(resultset.getInt("valor"));
+                produto.setStatus(resultset.getString("status"));
+
+                listagem.add(produto);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao listar produtos vendidos: " + e.getMessage());
+        } finally {
+            try {
+                if (resultset != null) {
+                    resultset.close();
+                }
+                if (prep != null) {
+                    prep.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Erro ao fechar conexão: " + e.getMessage());
+            }
+        }
+        return listagem;
     }
 }
