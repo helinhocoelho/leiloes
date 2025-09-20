@@ -130,7 +130,7 @@ public class cadastroVIEW extends javax.swing.JFrame {
             ProdutosDTO produto = new ProdutosDTO();
             String nome = cadastroNome.getText();
             String valor = cadastroValor.getText();
-            String status = "A Venda";
+            String status = "À Venda";
 
             if (nome.isEmpty() || valor.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Preencha todos os campos!");
@@ -160,6 +160,7 @@ public class cadastroVIEW extends javax.swing.JFrame {
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
         listagemVIEW listagem = new listagemVIEW();
         listagem.setVisible(true);
+        listagem.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnProdutosActionPerformed
 
     /**
@@ -192,7 +193,9 @@ public class cadastroVIEW extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new cadastroVIEW().setVisible(true);
+                cadastroVIEW view = new cadastroVIEW();
+                view.setVisible(true);
+                view.setLocationRelativeTo(null);
             }
         });
     }
