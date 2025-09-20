@@ -97,4 +97,53 @@ public class ProdutosDAO {
         }
         return listagem;
     }
+
+    public boolean venderProduto(int id) {
+        conn = new conectaDAO().connectDB();
+        boolean sucesso = false;
+
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Erro: Não foi possível conectar ao banco!");
+            return false;
+        }
+
+        try {
+            String sqlVerifica = "SELECT * FROM produtos WHERE id = ? AND status = 'A Venda'";
+            prep = conn.prepareStatement(sqlVerifica);
+            prep.setInt(1, id);
+            resultset = prep.executeQuery();
+
+            if (!resultset.next()) {
+                JOptionPane.showMessageDialog(null, "Produto não encontrado ou já vendido!");
+                return false;
+            }
+
+            String sqlAtualiza = "UPDATE produtos SET status = 'Vendido' WHERE id = ?";
+            prep = conn.prepareStatement(sqlAtualiza);
+            prep.setInt(1, id);
+
+            int linhasAfetadas = prep.executeUpdate();
+
+            if (linhasAfetadas > 0) {
+                sucesso = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao vender produto!");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao vender produto: " + e.getMessage());
+        } finally {
+            try {
+                if (prep != null) {
+                    prep.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Erro ao fechar conexão: " + e.getMessage());
+            }
+        }
+        return sucesso;
+    }
 }
